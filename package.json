@@ -22,7 +22,20 @@
   "dependencies": {
     "@electron-toolkit/preload": "^2.0.0",
     "@electron-toolkit/utils": "^2.0.0",
-    "electron-updater": "^6.1.1"
+    "@mdi/font": "^7.3.67",
+    "@mdi/js": "^7.3.67",
+    "@types/markdown-it": "^13.0.7",
+    "@types/markdown-it-container": "^2.0.9",
+    "@types/markdown-it-emoji": "^2.0.4",
+    "electron-updater": "^6.1.1",
+    "highlight.js": "^11.9.0",
+    "markdown-it": "^13.0.2",
+    "markdown-it-container": "^3.0.0",
+    "markdown-it-emoji": "^2.0.2",
+    "markdown-it-named-code-blocks": "^0.2.0",
+    "material-design-icons-iconfont": "^6.7.0",
+    "stylus": "^0.62.0",
+    "vue-router": "^4.2.5"
   },
   "devDependencies": {
     "@electron-toolkit/eslint-config": "^1.0.1",
