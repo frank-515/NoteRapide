@@ -35,7 +35,8 @@
     "markdown-it-named-code-blocks": "^0.2.0",
     "material-design-icons-iconfont": "^6.7.0",
     "stylus": "^0.62.0",
-    "vue-router": "^4.2.5"
+    "vue-router": "^4.2.5",
+    "vuetify": "^3.4.3"
   },
   "devDependencies": {
     "@electron-toolkit/eslint-config": "^1.0.1",
