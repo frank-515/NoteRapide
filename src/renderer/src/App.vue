@@ -1,97 +1,112 @@
-<script setup lang="ts">
-import Versions from './components/Versions.vue'
+<script lang="ts" setup>
+import {mdiAccount, mdiCog, mdiFileDocument, mdiPlus, mdiMinus, mdiCheckBold} from "@mdi/js";
+import {ref} from 'vue'
+import Editor from "./components/Editor.vue";
+const accountItem = ["Exit", "Font", "Plug-ins"]
+let drawerItem = ["How to write markdown", "How to use HTML5", "Ways to using node.js"]
+
+const drawer = ref(false);
+const newNoteDisplay = ref(false)
+const newNoteName = ref('')
+const currentDocumentName = ref('Ways to using node.js')
+
+const onNewNote = () => {
+  console.log(newNoteDisplay.value)
+  if (newNoteDisplay.value) {
+    newNoteName.value = ''
+    newNoteDisplay.value = false
+  } else {
+    newNoteDisplay.value = true
+    setTimeout(() => {
+      const inputDom = document.getElementById("name_input")
+      console.log(inputDom)
+      inputDom?.focus()
+    }, 100)
+  }
+}
+
+const onEnter = () => {
+  if (newNoteName.value.length == 0) {
+    return
+  }
+  drawerItem.push(newNoteName.value)
+  newNoteName.value = ''
+  newNoteDisplay.value = false
+}
+
 </script>
 
 <template>
-  <Versions></Versions>
+  <v-layout>
+    <v-system-bar color="indigo">
+    </v-system-bar>
+    <v-app-bar color="indigo">
+      <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
+      <v-app-bar-title>{{ currentDocumentName }}</v-app-bar-title>
+      <v-spacer></v-spacer>
+      <v-btn icon>
+        <v-icon :icon="mdiCog"></v-icon>
+        <v-menu activator="parent">
+          <v-list nav>
+            <v-list-item
+              v-for="(item, idx) in accountItem"
+              :key="idx"
+              :value="idx">
+              {{item}}
+            </v-list-item>
+          </v-list>
+        </v-menu>
+      </v-btn>
+    </v-app-bar>
 
-  <svg class="hero-logo" viewBox="0 0 900 300">
-    <use xlink:href="./assets/icons.svg#electron" />
-  </svg>
-  <h2 class="hero-text">You've successfully created an Electron project with Vue and TypeScript</h2>
-  <p class="hero-tagline">Please try pressing <code>F12</code> to open the devTool</p>
+    <v-navigation-drawer
+      v-model="drawer">
+      <v-list nav>
+        <v-list-item v-for="(item, idx) in drawerItem"
+                     :value="idx"
+                     :key="idx">
+          <template #title>
+            {{item}}
+          </template>
+        </v-list-item>
+        <v-list-item v-if="newNoteDisplay">
+          <template #title>
+            <v-text-field
+              density="compact"
+              variant="plain"
+              v-model="newNoteName"
+              id="name_input">
+            </v-text-field>
+          </template>
+          <template #append>
+            <v-btn @click="onEnter()" variant="plain" density="compact" size="small" id="check-btn">
+              <v-icon :icon="mdiCheckBold"></v-icon>
+            </v-btn>
+          </template>
+        </v-list-item>
+        <v-list-item @click="onNewNote()">
+          <template #prepend>
+            <v-icon :icon="mdiPlus" v-if="!newNoteDisplay"></v-icon>
+            <v-icon :icon="mdiMinus" v-else></v-icon>
+          </template>
+        </v-list-item>
+      </v-list>
+    </v-navigation-drawer>
 
-  <div class="links">
-    <div class="link-item">
-      <a target="_blank" href="https://electron-vite.org">Documentation</a>
-    </div>
-    <div class="link-item link-dot">•</div>
-    <div class="link-item">
-      <a target="_blank" href="https://github.com/alex8088/electron-vite">Getting Help</a>
-    </div>
-    <div class="link-item link-dot">•</div>
-    <div class="link-item">
-      <a
-        target="_blank"
-        href="https://github.com/alex8088/quick-start/tree/master/packages/create-electron"
-      >
-        create-electron
-      </a>
-    </div>
-  </div>
-
-  <div class="features">
-    <div class="feature-item">
-      <article>
-        <h2 class="title">Configuring</h2>
-        <p class="detail">
-          Config with <span>electron.vite.config.ts</span> and refer to the
-          <a target="_blank" href="https://electron-vite.org/config">config guide</a>.
-        </p>
-      </article>
-    </div>
-    <div class="feature-item">
-      <article>
-        <h2 class="title">HMR</h2>
-        <p class="detail">
-          Edit <span>src/renderer</span> files to test HMR. See
-          <a target="_blank" href="https://electron-vite.org/guide/hmr.html">docs</a>.
-        </p>
-      </article>
-    </div>
-    <div class="feature-item">
-      <article>
-        <h2 class="title">Hot Reloading</h2>
-        <p class="detail">
-          Run <span>'electron-vite dev --watch'</span> to enable. See
-          <a target="_blank" href="https://electron-vite.org/guide/hot-reloading.html">docs</a>.
-        </p>
-      </article>
-    </div>
-    <div class="feature-item">
-      <article>
-        <h2 class="title">Debugging</h2>
-        <p class="detail">
-          Check out <span>.vscode/launch.json</span>. See
-          <a target="_blank" href="https://electron-vite.org/guide/debugging.html">docs</a>.
-        </p>
-      </article>
-    </div>
-    <div class="feature-item">
-      <article>
-        <h2 class="title">Source Code Protection</h2>
-        <p class="detail">
-          Supported via built-in plugin <span>bytecodePlugin</span>. See
-          <a target="_blank" href="https://electron-vite.org/guide/source-code-protection.html">
-            docs
-          </a>
-          .
-        </p>
-      </article>
-    </div>
-    <div class="feature-item">
-      <article>
-        <h2 class="title">Packaging</h2>
-        <p class="detail">
-          Use
-          <a target="_blank" href="https://www.electron.build">electron-builder</a>
-          and pre-configured to pack your app.
-        </p>
-      </article>
-    </div>
-  </div>
+    <v-main>
+      <v-container fluid>
+        <Editor></Editor>
+      </v-container>
+    </v-main>
+  </v-layout>
 </template>
 
-<style lang="less">
-@import './assets/css/styles.less';
+<style lang="stylus">
+body
+  font: Helvetica
+  color: balck
+
+#check-btn
+  position relative
+  bottom 1ex
 </style>
