@@ -13,3 +13,6 @@ state-bar-height = 64px + 24px
   text-rendering: optimizeLegibility
   -webkit-font-smoothing: antialiased
   -moz-osx-font-smoothing: grayscale
+
+::-webkit-scrollbar
+  display none
