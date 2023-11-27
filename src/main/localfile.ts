@@ -9,7 +9,8 @@ interface UserPreference {
 interface FileItem {
   type: "File" | "Directory",
   name: string,
-  path: string,
+  absolute_path: string,
+  relative_path: string,
   dir_content?: FileItem[]
 }
 
@@ -83,21 +84,23 @@ function remove(p: string) {
 function read_dir(): FileItem[] {
   return read_dir_recursively(storage_path)
 }
-function read_dir_recursively(path) {
+function read_dir_recursively(p: string) {
   const fileItems: FileItem[] = [];
 
   // 读取指定路径下的所有文件和目录
-  const items = fs.readdirSync(path);
+  const items = fs.readdirSync(p);
 
   for (let i = 0; i < items.length; i++) {
     const itemName = items[i];
-    const itemPath = path + '/' + itemName;
+    const itemPath = path.join(p, itemName)
+    const relativePath = path.relative(storage_path, path.join(p, itemName))
     const stats = fs.statSync(itemPath);
 
     const fileItem: FileItem = {
       name: itemName,
-      path: itemPath,
-      type: "File"
+      absolute_path: itemPath,
+      type: "File",
+      relative_path: relativePath
     };
 
     // 如果是目录，则继续读取子目录和文件
