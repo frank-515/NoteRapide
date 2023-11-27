@@ -2,6 +2,7 @@ import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
+import { FileItem, loadUserPreference, read, read_dir, saveUserPreference, UserPreference, write } from "./localfile";
 
 function createWindow(): void {
   // Create the browser window.
@@ -77,4 +78,24 @@ app.on('window-all-closed', () => {
 
 ipcMain.on('close', () => {
   app.quit()
+})
+
+ipcMain.on('app.write', (_, path: string, data: string) => {
+  write(path, data)
+})
+
+ipcMain.on('app.read', async (_, path: string) => {
+  return read(path)
+})
+
+ipcMain.on('app.getUserPreference', async (_) : Promise<UserPreference> => {
+  return loadUserPreference()
+})
+
+ipcMain.on('app.saveUserPreference', (_, preference: UserPreference) => {
+  saveUserPreference(preference)
+})
+
+ipcMain.on('app.list', async (_) : Promise<FileItem[]> => {
+  return read_dir()
 })

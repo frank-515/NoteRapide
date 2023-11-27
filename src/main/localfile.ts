@@ -6,6 +6,14 @@ interface UserPreference {
   theme: "light" | "dark"
 }
 
+interface FileItem {
+  type: "File" | "Directory",
+  name: string,
+  path: string,
+  dir_content?: FileItem[]
+}
+
+
 const defaultUserPreference : UserPreference = {
   last_edit_path: "Untitled",
   theme: "light"
@@ -49,6 +57,7 @@ function read(p: string): string {
     return fs.readFileSync(p).toString()
   } catch (error) {
     console.error("Unable to read file:", error);
+    return ""
   }
 }
 
@@ -61,6 +70,7 @@ function write(p: string, data: string) {
   }
 }
 
+
 function remove(p: string) {
   p = path.join(storage_path, p)
   try {
@@ -70,7 +80,45 @@ function remove(p: string) {
   }
 }
 
+function read_dir(): FileItem[] {
+  return read_dir_recursively(storage_path)
+}
+function read_dir_recursively(path) {
+  const fileItems: FileItem[] = [];
+
+  // 读取指定路径下的所有文件和目录
+  const items = fs.readdirSync(path);
+
+  for (let i = 0; i < items.length; i++) {
+    const itemName = items[i];
+    const itemPath = path + '/' + itemName;
+    const stats = fs.statSync(itemPath);
+
+    const fileItem: FileItem = {
+      name: itemName,
+      path: itemPath,
+      type: "File"
+    };
+
+    // 如果是目录，则继续读取子目录和文件
+    if (stats.isDirectory()) {
+      fileItem.type = 'Directory';
+      fileItem.dir_content = read_dir_recursively(itemPath);
+    } else {
+      fileItem.type = 'File';
+    }
+
+    fileItems.push(fileItem);
+  }
+
+  return fileItems;
+}
+
 export {
   storage_path, user_preference_path,
-  init_storage, loadUserPreference, saveUserPreference, read, write, remove
+  init_storage, loadUserPreference, saveUserPreference, read, write, remove, read_dir
+}
+
+export type {
+  UserPreference, FileItem
 }
