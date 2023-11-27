@@ -37,9 +37,10 @@ const rended_md_text = computed(() => {
 })
 
 onMounted(() => {
-  let textarea_dom = document.querySelector("textarea")
+
 
   const insert = (c: string) => {
+    const textarea_dom = document.querySelector("textarea")!
     let start = textarea_dom.selectionStart
     let end = textarea_dom.selectionEnd
     textarea_dom.value = textarea_dom.value.substring(0, start)
