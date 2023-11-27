@@ -31,7 +31,7 @@ const md = markdown_it({
 const {mdAndUp} = useDisplay()
 
 const raw_md_text = ref("")
-const rended_md_text = computed(() => {
+const rendered_md_text = computed(() => {
   return md.render(raw_md_text.value).toString()
 })
 
@@ -94,7 +94,7 @@ onMounted(() => {
 
     <v-sheet id="preview" v-if="mdAndUp">
       <v-icon :icon="mdiTextBox"></v-icon>
-      <div v-html="rended_md_text">
+      <div v-html="rendered_md_text">
       </div>
     </v-sheet>
   </div>

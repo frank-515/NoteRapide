@@ -1,6 +1,7 @@
 import { createApp } from 'vue'
 import './style.stylus'
 import App from './App.vue'
+import { createPinia } from "pinia";
 
 // Vuetify
 import 'vuetify/styles'
@@ -11,6 +12,7 @@ import * as directives from 'vuetify/directives'
 // MDI Icons
 import { aliases, mdi } from 'vuetify/iconsets/mdi-svg'
 
+const pinia = createPinia()
 const vuetify = createVuetify({
   components,
   directives,
@@ -28,4 +30,5 @@ const vuetify = createVuetify({
 
 createApp(App)
   .use(vuetify)
+  .use(pinia)
   .mount('#app')

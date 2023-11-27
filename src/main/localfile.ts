@@ -2,12 +2,12 @@ import * as fs from 'fs'
 import * as path from 'path'
 import {app} from 'electron'
 interface UserPreference {
-  last_open_file: string,
+  last_edit_path: string,
   theme: "light" | "dark"
 }
 
 const defaultUserPreference : UserPreference = {
-  last_open_file: "Untitled",
+  last_edit_path: "Untitled",
   theme: "light"
 }
 
@@ -71,7 +71,6 @@ function remove(p: string) {
 }
 
 export {
-  UserPreference,
   storage_path, user_preference_path,
   init_storage, loadUserPreference, saveUserPreference, read, write, remove
 }
