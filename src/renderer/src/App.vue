@@ -2,6 +2,11 @@
 import {mdiAccount, mdiCog, mdiFileDocument, mdiPlus, mdiMinus, mdiCheckBold} from "@mdi/js";
 import {ref} from 'vue'
 import Editor from "./components/Editor.vue";
+import {useUserStore} from "./userStore";
+import { storeToRefs } from "pinia";
+
+const userStore = useUserStore()
+const { last_edit_path } = storeToRefs(userStore)
 const accountItem = ["Exit", "Font", "Plug-ins"]
 let drawerItem = ["How to write markdown", "How to use HTML5", "Ways to using node.js"]
 
