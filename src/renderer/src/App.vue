@@ -4,12 +4,22 @@ import { computed, onMounted, ref } from 'vue'
 import Editor from './components/Editor.vue'
 import { useUserStore } from './userStore'
 import { storeToRefs } from 'pinia'
+import { FileItem } from "../../main/localfile";
 
 const userStore = useUserStore()
 const { last_edit_path } = storeToRefs(userStore)
 const accountItem = ['Exit', 'Font', 'Plug-ins']
 
-const drawerItem = ref<string[]>([])
+interface FileItem {
+  type: "File" | "Directory",
+  name: string,
+  absolute_path: string,
+  relative_path: string,
+  dir_content?: FileItem[]
+}
+
+
+const fileList = ref<FileItem[]>([])
 const drawer = ref(false)
 const newNoteDisplay = ref(false)
 const newNoteName = ref('')
@@ -21,6 +31,21 @@ const currentDocumentName = computed(() => {
   // 去除文件后缀
   const lastDotIndex = fileName.lastIndexOf('.')
   return lastDotIndex > -1 ? fileName.slice(0, lastDotIndex) : fileName
+})
+
+const updateSideList = () => {
+  api.app_invoke('list')
+    .then((list: FileItem[]) => {
+      fileList.value = list.filter((f) => f.type === "File")
+    })
+}
+
+const drawerItem = computed(() => {
+  return fileList.value.map((item) => {
+    let lastDotIndex = item.name.lastIndexOf('.')
+    return lastDotIndex > -1 ? item.relative_path.slice(0, lastDotIndex)
+      : item.relative_path
+  })
 })
 
 const onNewNote = () => {
@@ -49,6 +74,7 @@ const onEnter = () => {
 
 onMounted(() => {
   userStore.loadUserPreference()
+  updateSideList()
 })
 </script>
 
