@@ -1,18 +1,34 @@
 <script lang="ts" setup>
-import { mdiCheckBold, mdiCog, mdiMinus, mdiPlus, mdiExportVariant } from '@mdi/js'
+import {
+  mdiCheckBold,
+  mdiCog,
+  mdiMinus,
+  mdiPlus,
+  mdiExportVariant,
+  mdiPencil,
+  mdiDelete,
+  mdiContentCopy
+} from "@mdi/js";
 import { computed, onMounted, ref, toValue } from "vue";
 import Editor from './components/Editor.vue'
 import { useUserStore } from './userStore'
 import { storeToRefs } from 'pinia'
 import { FileItem } from "../../main/localfile";
+import { mdiChevronDown } from "@mdi/js/commonjs/mdi";
 
 const userStore = useUserStore()
 const { last_edit_path } = storeToRefs(userStore)
-const actionList = [
+const statusBarActionList = [
   {name: 'Exit', action: () => {api.close()}},
   {name: 'Font', action: () => {}},
   {name: 'Plug-ins', action: () => {}}
 ];
+const fileListActionList = [
+  {name: 'Rename', icon: mdiPencil ,action: (index: number) => {}},
+  {name: 'Delete', icon: mdiDelete ,action: (index: number) => {}},
+  {name: 'Duplicate', icon: mdiContentCopy, action: (index: number) => {}}
+]
+
 
 interface FileItem {
   type: "File" | "Directory",
@@ -115,7 +131,7 @@ onMounted(() => {
         <v-icon :icon="mdiCog"></v-icon>
         <v-menu activator="parent">
           <v-list nav>
-            <v-list-item v-for="(item, idx) in actionList" :key="idx" :value="idx" @click="item.action()">
+            <v-list-item v-for="(item, idx) in statusBarActionList" :key="idx" :value="idx" @click="item.action()">
               {{ item.name }}
             </v-list-item>
           </v-list>
@@ -125,9 +141,24 @@ onMounted(() => {
 
     <v-navigation-drawer v-model="drawer">
       <v-list nav>
-        <v-list-item v-for="(item, idx) in drawerItem" :value="idx" :key="idx" @click="onClickDocument(idx)">
+        <v-list-item v-for="(item, idx) in drawerItem"
+                     :value="idx" :key="idx" @click="onClickDocument(idx)">
           <template #title>
             {{ item }}
+          </template>
+          <template #append>
+            <v-btn icon variant="plain" density="compact">
+              <v-icon :icon="mdiChevronDown"></v-icon>
+              <v-menu activator="parent">
+                <v-btn-group>
+                  <v-btn v-for="(item, idx) in fileListActionList" variant="elevated"
+                         :value="idx" :key="idx" @click="item.action(idx)"
+                  >
+                    <v-icon size="large" :icon="item.icon"></v-icon>
+                  </v-btn>
+                </v-btn-group>
+              </v-menu>
+            </v-btn>
           </template>
         </v-list-item>
         <v-list-item v-if="newNoteDisplay">
