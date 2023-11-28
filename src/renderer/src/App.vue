@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { mdiCheckBold, mdiCog, mdiMinus, mdiPlus } from '@mdi/js'
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, toValue } from "vue";
 import Editor from './components/Editor.vue'
 import { useUserStore } from './userStore'
 import { storeToRefs } from 'pinia'
@@ -67,7 +67,11 @@ const onEnter = () => {
   if (newNoteName.value.length == 0) {
     return
   }
-  drawerItem.value.push(newNoteName.value)
+  last_edit_path.value = newNoteName.value
+  // Create new file first
+  api.app_send('write', toValue(last_edit_path), '')
+  // drawerItem.value.push(newNoteName.value)
+  updateSideList()
   newNoteName.value = ''
   newNoteDisplay.value = false
 }
