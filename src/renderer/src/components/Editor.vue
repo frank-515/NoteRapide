@@ -54,7 +54,7 @@ const rendered_md_text = computed(() => {
 
 onMounted(() => {
   setInterval(() => {
-    api.app_send('write', toValue(last_edit_path) + '.md', toValue(raw_md_text))
+    api.app_send('write', toValue(last_edit_path), toValue(raw_md_text))
   }, 100)
 
   const insert = (c: string) => {

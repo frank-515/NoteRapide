@@ -2,6 +2,7 @@ import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
+import {dialog} from 'electron'
 import {
   FileItem,
   init_storage,
@@ -107,4 +108,19 @@ ipcMain.on('app.saveUserPreference', (_, preference: UserPreference) => {
 
 ipcMain.handle('app.list', async (_) : Promise<FileItem[]> => {
   return read_dir()
+})
+
+ipcMain.handle('app.displayFileSelector', async (_) : Promise<string> => {
+  dialog
+    .showSaveDialog({
+      title: 'Save document to',
+      defaultPath: app.getPath('desktop')
+    })
+    .then((cb) => {
+      if (cb.canceled) {
+        return ''
+      } else {
+        return cb.filePath!
+      }
+    })
 })
