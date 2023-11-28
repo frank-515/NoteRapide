@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {useDisplay} from "vuetify";
-import {computed, onMounted, ref} from "vue";
+import { computed, onMounted, ref, toValue, watch } from "vue";
 import {mdiLanguageMarkdown, mdiTextBox} from "@mdi/js";
 
 import markdown_it from "markdown-it";
@@ -8,6 +8,23 @@ import emoji from 'markdown-it-emoji'
 import namedCodeBlocks from "markdown-it-named-code-blocks";
 import hljs from 'highlight.js'
 import 'highlight.js/styles/monokai.css'
+import {useUserStore} from "../userStore";
+import {storeToRefs} from 'pinia'
+
+const userStore = useUserStore()
+const { last_edit_path } = storeToRefs(userStore)
+
+watch(last_edit_path, (last_edit_path) => {
+  console.log('[DEBUG]: Reading file:' + last_edit_path.value);
+  api.app_invoke('read', toValue(last_edit_path))
+    .then((content: string) => {
+      raw_md_text.value = content
+    })
+    .catch((error) => {
+      console.error("Error when reading file",error);
+    })
+
+})
 
 const md = markdown_it({
   breaks: true,
