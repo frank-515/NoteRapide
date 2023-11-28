@@ -28,6 +28,7 @@ function init_storage() {
     if (!fs.existsSync(user_preference_path)) {
       fs.writeFileSync(user_preference_path, JSON.stringify(defaultUserPreference))
     }
+    console.log('[DEBUG]: Running at ', storage_path);
   } catch (error) {
     console.error("Unable to init:", error);
   }
