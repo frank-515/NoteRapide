@@ -15,7 +15,7 @@ const userStore = useUserStore()
 const { last_edit_path } = storeToRefs(userStore)
 
 watch(last_edit_path, (last_edit_path) => {
-  console.log('[DEBUG]: Reading file:' + last_edit_path.value);
+  console.log('[DEBUG]: Reading file:' + toValue(last_edit_path));
   api.app_invoke('read', toValue(last_edit_path))
     .then((content: string) => {
       raw_md_text.value = content
