@@ -114,20 +114,7 @@ ipcMain.handle('app.list', async (_) : Promise<FileItem[]> => {
   return read_dir()
 })
 
-ipcMain.handle('app.displayFileSelector', async (_) : Promise<string> => {
-  dialog
-    .showSaveDialog({
-      title: 'Save document',
-      defaultPath: app.getPath('desktop')
-    })
-    .then((cb) => {
-      if (cb.canceled) {
-        return ''
-      } else {
-        return cb.filePath!
-      }
-    })
-})
+
 
 ipcMain.on('app.saveTo', (_, content: string) => {
   dialog
