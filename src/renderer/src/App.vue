@@ -8,7 +8,11 @@ import { FileItem } from "../../main/localfile";
 
 const userStore = useUserStore()
 const { last_edit_path } = storeToRefs(userStore)
-const accountItem = ['Exit', 'Font', 'Plug-ins']
+const actionList = [
+  {name: 'Exit', action: () => {api.close()}},
+  {name: 'Font', action: () => {}},
+  {name: 'Plug-ins', action: () => {}}
+];
 
 interface FileItem {
   type: "File" | "Directory",
@@ -97,8 +101,8 @@ onMounted(() => {
         <v-icon :icon="mdiCog"></v-icon>
         <v-menu activator="parent">
           <v-list nav>
-            <v-list-item v-for="(item, idx) in accountItem" :key="idx" :value="idx">
-              {{ item }}
+            <v-list-item v-for="(item, idx) in actionList" :key="idx" :value="idx" @click="item.action()">
+              {{ item.name }}
             </v-list-item>
           </v-list>
         </v-menu>

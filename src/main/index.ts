@@ -124,3 +124,18 @@ ipcMain.handle('app.displayFileSelector', async (_) : Promise<string> => {
       }
     })
 })
+
+ipcMain.on('app.saveTo', (_, content: string) => {
+  dialog
+    .showSaveDialog({
+      title: 'Save document to',
+      defaultPath: app.getPath('desktop')
+    })
+    .then((cb) => {
+      if (cb.canceled) {
+        return
+      } else {
+        write(cb.filePath!, content)
+      }
+    })
+})
