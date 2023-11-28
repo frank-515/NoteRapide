@@ -11,7 +11,7 @@ import {
   read_dir,
   saveUserPreference,
   UserPreference,
-  write
+  write, write_absolute
 } from "./localfile";
 
 function createWindow(): void {
@@ -94,6 +94,10 @@ ipcMain.on('app.write', (_, path: string, data: string) => {
   write(path, data)
 })
 
+ipcMain.on('app.writeAbsolute', (_, path: string, data: string) => {
+  write_absolute(path, data)
+})
+
 ipcMain.handle('app.read', async (_, path: string) => {
   return read(path)
 })
@@ -113,7 +117,7 @@ ipcMain.handle('app.list', async (_) : Promise<FileItem[]> => {
 ipcMain.handle('app.displayFileSelector', async (_) : Promise<string> => {
   dialog
     .showSaveDialog({
-      title: 'Save document to',
+      title: 'Save document',
       defaultPath: app.getPath('desktop')
     })
     .then((cb) => {
@@ -128,14 +132,14 @@ ipcMain.handle('app.displayFileSelector', async (_) : Promise<string> => {
 ipcMain.on('app.saveTo', (_, content: string) => {
   dialog
     .showSaveDialog({
-      title: 'Save document to',
+      title: 'Save document',
       defaultPath: app.getPath('desktop')
     })
     .then((cb) => {
       if (cb.canceled) {
         return
       } else {
-        write(cb.filePath!, content)
+        write_absolute(cb.filePath!, content)
       }
     })
 })

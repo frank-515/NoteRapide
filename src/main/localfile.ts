@@ -72,6 +72,14 @@ function write(p: string, data: string) {
   }
 }
 
+function write_absolute(p: string, data: string) {
+  try {
+    fs.writeFileSync(p, data, {flag: 'w'})
+  } catch(error) {
+    console.error("Unable to write:", error);
+  }
+}
+
 
 function remove(p: string) {
   p = path.join(storage_path, p)
@@ -120,7 +128,8 @@ function read_dir_recursively(p: string) {
 
 export {
   storage_path, user_preference_path,
-  init_storage, loadUserPreference, saveUserPreference, read, write, remove, read_dir
+  init_storage, loadUserPreference, saveUserPreference,
+  read, write, remove, read_dir, write_absolute
 }
 
 export type {

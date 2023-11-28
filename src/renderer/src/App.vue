@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { mdiCheckBold, mdiCog, mdiMinus, mdiPlus } from '@mdi/js'
+import { mdiCheckBold, mdiCog, mdiMinus, mdiPlus, mdiExportVariant } from '@mdi/js'
 import { computed, onMounted, ref, toValue } from "vue";
 import Editor from './components/Editor.vue'
 import { useUserStore } from './userStore'
@@ -67,6 +67,17 @@ const onNewNote = () => {
   }
 }
 
+const onExport = () => {
+  let content = api.app_invoke('read', toValue(last_edit_path))
+    .then((content: string) => {
+      api.app_send('saveTo', content)
+    })
+    .catch((err) => {
+      console.error("Unable to save: ", err);
+    })
+
+}
+
 const onEnter = () => {
   if (newNoteName.value.length == 0) {
     return
@@ -97,6 +108,9 @@ onMounted(() => {
       <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
       <v-app-bar-title>{{ currentDocumentName }}</v-app-bar-title>
       <v-spacer></v-spacer>
+      <v-btn icon>
+        <v-icon :icon="mdiExportVariant" @click="onExport()"></v-icon>
+      </v-btn>
       <v-btn icon>
         <v-icon :icon="mdiCog"></v-icon>
         <v-menu activator="parent">
