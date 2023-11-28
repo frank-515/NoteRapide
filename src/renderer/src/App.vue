@@ -1,19 +1,27 @@
 <script lang="ts" setup>
-import {mdiAccount, mdiCog, mdiFileDocument, mdiPlus, mdiMinus, mdiCheckBold} from "@mdi/js";
-import {ref} from 'vue'
-import Editor from "./components/Editor.vue";
-import {useUserStore} from "./userStore";
-import { storeToRefs } from "pinia";
+import { mdiCheckBold, mdiCog, mdiMinus, mdiPlus } from '@mdi/js'
+import { computed, onMounted, ref } from 'vue'
+import Editor from './components/Editor.vue'
+import { useUserStore } from './userStore'
+import { storeToRefs } from 'pinia'
 
 const userStore = useUserStore()
 const { last_edit_path } = storeToRefs(userStore)
-const accountItem = ["Exit", "Font", "Plug-ins"]
-let drawerItem = ["How to write markdown", "How to use HTML5", "Ways to using node.js"]
+const accountItem = ['Exit', 'Font', 'Plug-ins']
 
-const drawer = ref(false);
+const drawerItem = ref<string[]>([])
+const drawer = ref(false)
 const newNoteDisplay = ref(false)
 const newNoteName = ref('')
-const currentDocumentName = ref('Ways to using node.js')
+
+const currentDocumentName = computed(() => {
+  // 获取文件名
+  const fileNameWithExtension = last_edit_path.value
+  const fileName = fileNameWithExtension.split('/').pop() || '' // 使用split和pop获取最后一个片段作为文件名
+  // 去除文件后缀
+  const lastDotIndex = fileName.lastIndexOf('.')
+  return lastDotIndex > -1 ? fileName.slice(0, lastDotIndex) : fileName
+})
 
 const onNewNote = () => {
   console.log(newNoteDisplay.value)
@@ -23,7 +31,7 @@ const onNewNote = () => {
   } else {
     newNoteDisplay.value = true
     setTimeout(() => {
-      const inputDom = document.getElementById("name_input")
+      const inputDom = document.getElementById('name_input')
       console.log(inputDom)
       inputDom?.focus()
     }, 100)
@@ -34,17 +42,19 @@ const onEnter = () => {
   if (newNoteName.value.length == 0) {
     return
   }
-  drawerItem.push(newNoteName.value)
+  drawerItem.value.push(newNoteName.value)
   newNoteName.value = ''
   newNoteDisplay.value = false
 }
 
+onMounted(() => {
+  userStore.loadUserPreference()
+})
 </script>
 
 <template>
   <v-layout>
-    <v-system-bar color="indigo">
-    </v-system-bar>
+    <v-system-bar color="indigo"> </v-system-bar>
     <v-app-bar color="indigo">
       <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
       <v-app-bar-title>{{ currentDocumentName }}</v-app-bar-title>
@@ -53,34 +63,24 @@ const onEnter = () => {
         <v-icon :icon="mdiCog"></v-icon>
         <v-menu activator="parent">
           <v-list nav>
-            <v-list-item
-              v-for="(item, idx) in accountItem"
-              :key="idx"
-              :value="idx">
-              {{item}}
+            <v-list-item v-for="(item, idx) in accountItem" :key="idx" :value="idx">
+              {{ item }}
             </v-list-item>
           </v-list>
         </v-menu>
       </v-btn>
     </v-app-bar>
 
-    <v-navigation-drawer
-      v-model="drawer">
+    <v-navigation-drawer v-model="drawer">
       <v-list nav>
-        <v-list-item v-for="(item, idx) in drawerItem"
-                     :value="idx"
-                     :key="idx">
+        <v-list-item v-for="(item, idx) in drawerItem" :value="idx" :key="idx">
           <template #title>
-            {{item}}
+            {{ item }}
           </template>
         </v-list-item>
         <v-list-item v-if="newNoteDisplay">
           <template #title>
-            <v-text-field
-              density="compact"
-              variant="plain"
-              v-model="newNoteName"
-              id="name_input">
+            <v-text-field density="compact" variant="plain" v-model="newNoteName" id="name_input">
             </v-text-field>
           </template>
           <template #append>
