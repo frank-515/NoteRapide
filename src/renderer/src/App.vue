@@ -72,6 +72,10 @@ const onEnter = () => {
   newNoteDisplay.value = false
 }
 
+const onClickDocument = (index: number) => {
+  last_edit_path.value = fileList.value[index].relative_path
+}
+
 onMounted(() => {
   userStore.loadUserPreference()
   updateSideList()
@@ -99,7 +103,7 @@ onMounted(() => {
 
     <v-navigation-drawer v-model="drawer">
       <v-list nav>
-        <v-list-item v-for="(item, idx) in drawerItem" :value="idx" :key="idx">
+        <v-list-item v-for="(item, idx) in drawerItem" :value="idx" :key="idx" @click="onClickDocument(idx)">
           <template #title>
             {{ item }}
           </template>
