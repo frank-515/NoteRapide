@@ -222,6 +222,10 @@ onMounted(() => {
   userStore.loadUserPreference()
   setInterval(() => {
     updateSideList()
+    window.api.app_send('saveUserPreference', {
+      last_edit_path: toValue(last_edit_path),
+      theme: 'light'
+    })
   }, 1000)
 })
 </script>
