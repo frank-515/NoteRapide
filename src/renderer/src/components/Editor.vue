@@ -113,7 +113,7 @@ onMounted(() => {
 
     <v-sheet id="preview" v-if="mdAndUp">
       <v-icon :icon="mdiTextBox"></v-icon>
-      <div v-html="rendered_md_text">
+      <div v-html="rendered_md_text" id="preview-area">
       </div>
     </v-sheet>
   </div>
