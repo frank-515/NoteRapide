@@ -1,6 +1,6 @@
 {
   "name": "note-rapide",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "A easy markdown editor powered by Electron",
   "main": "./out/main/index.js",
   "author": "frank515_@outlook.com",
