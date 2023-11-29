@@ -2,18 +2,22 @@ import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
-import {dialog} from 'electron'
+import { dialog } from 'electron'
 import {
   duplicate,
   FileItem,
   init_storage,
-  loadUserPreference, move,
+  loadUserPreference,
+  move,
   read,
-  read_dir, remove, rename,
+  read_dir,
+  remove,
+  rename,
   saveUserPreference,
   UserPreference,
-  write, write_absolute
-} from "./localfile";
+  write,
+  write_absolute
+} from './localfile'
 
 function createWindow(): void {
   // Create the browser window.
@@ -25,7 +29,7 @@ function createWindow(): void {
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
-      sandbox: false,
+      sandbox: false
       // devTools: true
     }
   })
@@ -86,7 +90,6 @@ app.on('window-all-closed', () => {
 // In this file you can include the rest of your app"s specific main process
 // code. You can also put them in separate files and require them here.
 
-
 ipcMain.on('close', () => {
   app.quit()
 })
@@ -103,7 +106,7 @@ ipcMain.handle('app.read', async (_, path: string) => {
   return read(path)
 })
 
-ipcMain.handle('app.getUserPreference', async (_) : Promise<UserPreference> => {
+ipcMain.handle('app.getUserPreference', async (_): Promise<UserPreference> => {
   return loadUserPreference()
 })
 
@@ -111,7 +114,7 @@ ipcMain.on('app.saveUserPreference', (_, preference: UserPreference) => {
   saveUserPreference(preference)
 })
 
-ipcMain.handle('app.list', async (_) : Promise<FileItem[]> => {
+ipcMain.handle('app.list', async (_): Promise<FileItem[]> => {
   return read_dir()
 })
 
@@ -129,7 +132,7 @@ ipcMain.on('app.duplicate', (_, p: string, destination: string) => {
 
 ipcMain.on('app.remove', (_, path: string) => {
   remove(path)
-} )
+})
 
 ipcMain.on('app.saveTo', (_, content: string) => {
   dialog

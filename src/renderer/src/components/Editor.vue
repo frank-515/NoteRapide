@@ -1,29 +1,29 @@
 <script setup lang="ts">
-import {useDisplay} from "vuetify";
-import { computed, onMounted, ref, toValue, watch } from "vue";
-import {mdiLanguageMarkdown, mdiTextBox} from "@mdi/js";
+import { useDisplay } from 'vuetify'
+import { computed, onMounted, ref, toValue, watch } from 'vue'
+import { mdiLanguageMarkdown, mdiTextBox } from '@mdi/js'
 
-import markdown_it from "markdown-it";
+import markdown_it from 'markdown-it'
 import emoji from 'markdown-it-emoji'
-import namedCodeBlocks from "markdown-it-named-code-blocks";
+import namedCodeBlocks from 'markdown-it-named-code-blocks'
 import hljs from 'highlight.js'
 import 'highlight.js/styles/monokai.css'
-import {useUserStore} from "../userStore";
-import {storeToRefs} from 'pinia'
+import { useUserStore } from '../userStore'
+import { storeToRefs } from 'pinia'
 
 const userStore = useUserStore()
 const { last_edit_path } = storeToRefs(userStore)
 
 watch(last_edit_path, (last_edit_path) => {
-  console.log('[DEBUG]: Reading file:' + toValue(last_edit_path));
-  window.api.app_invoke('read', toValue(last_edit_path))
+  console.log('[DEBUG]: Reading file:' + toValue(last_edit_path))
+  window.api
+    .app_invoke('read', toValue(last_edit_path))
     .then((content: string) => {
       raw_md_text.value = content
     })
     .catch((error) => {
-      console.error("Error when reading file",error);
+      console.error('Error when reading file', error)
     })
-
 })
 
 const md = markdown_it({
@@ -34,20 +34,18 @@ const md = markdown_it({
   highlight: function (str, lang) {
     if (lang && hljs.getLanguage(lang)) {
       try {
-        return '<pre class="hljs"><code>' +
-          hljs.highlight(lang, str, true).value +
-          '</code></pre>';
+        return '<pre class="hljs"><code>' + hljs.highlight(lang, str, true).value + '</code></pre>'
       } catch (__) {}
     }
-    return '<pre class="hljs"><code>' + md.utils.escapeHtml(str) + '</code></pre>';
-  },
+    return '<pre class="hljs"><code>' + md.utils.escapeHtml(str) + '</code></pre>'
+  }
 })
   .use(emoji)
   .use(namedCodeBlocks)
 
-const {mdAndUp} = useDisplay()
+const { mdAndUp } = useDisplay()
 
-const raw_md_text = ref("")
+const raw_md_text = ref('')
 const rendered_md_text = computed(() => {
   return md.render(raw_md_text.value).toString()
 })
@@ -58,21 +56,20 @@ onMounted(() => {
   }, 100)
 
   const insert = (c: string) => {
-    const textarea_dom = document.querySelector("textarea")!
+    const textarea_dom = document.querySelector('textarea')!
     let start = textarea_dom.selectionStart
     let end = textarea_dom.selectionEnd
-    textarea_dom.value = textarea_dom.value.substring(0, start)
-      + c
-      + textarea_dom.value.substring(end)
-    textarea_dom.selectionStart = textarea_dom.selectionEnd = start + 1;
+    textarea_dom.value =
+      textarea_dom.value.substring(0, start) + c + textarea_dom.value.substring(end)
+    textarea_dom.selectionStart = textarea_dom.selectionEnd = start + 1
   }
 
-  addEventListener("keydown", (event) => {
+  addEventListener('keydown', (event) => {
     // When input
     switch (event.key) {
       case 'Tab':
         event.preventDefault()
-        insert('\t');
+        insert('\t')
         break
       case '(':
         event.preventDefault()
@@ -93,8 +90,6 @@ onMounted(() => {
     }
   })
 })
-
-
 </script>
 
 <template>
@@ -107,14 +102,14 @@ onMounted(() => {
         :autofocus="true"
         :auto-grow="true"
         :no-resize="true"
-        id="textarea">
+        id="textarea"
+      >
       </v-textarea>
     </v-sheet>
 
     <v-sheet id="preview" v-if="mdAndUp">
       <v-icon :icon="mdiTextBox"></v-icon>
-      <div v-html="rendered_md_text" id="preview-area">
-      </div>
+      <div v-html="rendered_md_text" id="preview-area"></div>
     </v-sheet>
   </div>
 </template>

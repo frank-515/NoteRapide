@@ -4,13 +4,13 @@ import { electronAPI } from '@electron-toolkit/preload'
 // Custom APIs for renderer
 const api = {
   close: () => {
-    electronAPI.ipcRenderer.send("close")
+    electronAPI.ipcRenderer.send('close')
   },
-  app_send: (action: string, ...argv :any[]) => {
+  app_send: (action: string, ...argv: any[]) => {
     electronAPI.ipcRenderer.send('app.' + action, ...argv)
   },
-  app_invoke: (action: string, ...argv :any[]) => {
-    return electronAPI.ipcRenderer.invoke('app.' + action, ...argv);
+  app_invoke: (action: string, ...argv: any[]) => {
+    return electronAPI.ipcRenderer.invoke('app.' + action, ...argv)
   }
 }
 

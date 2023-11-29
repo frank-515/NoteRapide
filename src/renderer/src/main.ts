@@ -1,7 +1,7 @@
 import { createApp } from 'vue'
 import './style.stylus'
 import App from './App.vue'
-import { createPinia } from "pinia";
+import { createPinia } from 'pinia'
 
 // Vuetify
 import 'vuetify/styles'
@@ -17,20 +17,19 @@ const vuetify = createVuetify({
   components,
   directives,
   theme: {
-    defaultTheme: 'light',
+    defaultTheme: 'light'
   },
   icons: {
     defaultSet: 'mdi',
     aliases,
     sets: {
-      mdi,
-    },
-  },
+      mdi
+    }
+  }
 })
 
 const app = createApp(App)
 
 app.use(pinia).use(vuetify)
-
 
 app.mount('#app')
