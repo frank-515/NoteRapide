@@ -28,7 +28,9 @@ const vuetify = createVuetify({
   },
 })
 
-createApp(App)
-  .use(vuetify)
-  .use(pinia)
-  .mount('#app')
+const app = createApp(App)
+
+app.use(pinia).use(vuetify)
+
+
+app.mount('#app')
