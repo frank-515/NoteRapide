@@ -1,10 +1,10 @@
 {
-  "name": "my-app",
+  "name": "note-rapide",
   "version": "1.0.0",
-  "description": "An Electron application with Vue and TypeScript",
+  "description": "A easy markdown editor powered by Electron",
   "main": "./out/main/index.js",
-  "author": "example.com",
-  "homepage": "https://www.electronjs.org",
+  "author": "frank515_@outlook.com",
+  "homepage": "https://twitter.com/Frank51515",
   "scripts": {
     "format": "prettier --write .",
     "lint": "eslint . --ext .js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts,.vue --fix",
@@ -61,5 +61,6 @@
     "vite": "^4.4.9",
     "vue": "^3.3.4",
     "vue-tsc": "^1.8.8"
-  }
+  },
+  "__npminstall_done": false
 }
