@@ -8,6 +8,7 @@
     "src/renderer/src/userStore.ts"
   ],
   "compilerOptions": {
+    "noUnusedParameters": false,
     "composite": true,
     "baseUrl": ".",
     "paths": {

@@ -13,7 +13,6 @@ import { computed, onMounted, ref, toValue } from "vue";
 import Editor from './components/Editor.vue'
 import { useUserStore } from './userStore'
 import { storeToRefs } from 'pinia'
-import { FileItem } from "../../main/localfile";
 import { mdiChevronDown } from "@mdi/js/commonjs/mdi";
 import html2canvas from "html2canvas";
 import JsPDF from 'jspdf';
@@ -21,7 +20,7 @@ import JsPDF from 'jspdf';
 const userStore = useUserStore()
 const { last_edit_path } = storeToRefs(userStore)
 const statusBarActionList = [
-  {name: 'Exit', action: () => {api.close()}},
+  {name: 'Exit', action: () => {window.api.close()}},
   {name: 'Font', action: () => {}},
   {name: 'Plug-ins', action: () => {
     snapPDF()
@@ -58,12 +57,12 @@ const fileListActionList = [
         last_edit_path.value = '/Untitled'
       }
     }
-    api.app_send('remove', filePath);
+    window.api.app_send('remove', filePath);
     updateSideList()
     }},
   {name: 'Duplicate', icon: mdiContentCopy, action: (index: number) => {
     const filePath = fileList.value[index].relative_path;
-    api.app_send('duplicate', filePath , filePath + '(copy)');
+    window.api.app_send('duplicate', filePath , filePath + '(copy)');
     updateSideList()
     }}
 ]
@@ -142,7 +141,7 @@ const snapPDF = () => {
 }
 
 const updateSideList = () => {
-  api.app_invoke('list')
+  window.api.app_invoke('list')
     .then((list: FileItem[]) => {
       fileList.value = list.filter((f) => f.type === "File")
     })
@@ -172,9 +171,9 @@ const onNewNote = () => {
 }
 
 const onExport = () => {
-  let content = api.app_invoke('read', toValue(last_edit_path))
+  window.api.app_invoke('read', toValue(last_edit_path))
     .then((content: string) => {
-      api.app_send('saveTo', content)
+      window.api.app_send('saveTo', content)
     })
     .catch((err) => {
       console.error("Unable to save: ", err);
@@ -188,7 +187,7 @@ const onEnter = () => {
   }
   last_edit_path.value = newNoteName.value
   // Create new file first
-  api.app_send('write', toValue(last_edit_path), '')
+  window.api.app_send('write', toValue(last_edit_path), '')
   // drawerItem.value.push(newNoteName.value)
   updateSideList()
   newNoteName.value = ''

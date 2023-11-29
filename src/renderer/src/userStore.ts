@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { computed, ref } from "vue";
+import { ref } from "vue";
 
 interface UserPreference {
   last_edit_path: string,
@@ -16,14 +16,14 @@ export const useUserStore = defineStore('user', () => {
     }
   }
   const loadUserPreference = () => {
-    api.app_invoke('getUserPreference')
+    window.api.app_invoke('getUserPreference')
       .then((p: UserPreference) => {
         last_edit_path.value = p.last_edit_path
         theme.value = p.theme
       })
   }
   const saveUserPreference = () => {
-    api.app_send('saveUserPreference', getUserPreference())
+    window.api.app_send('saveUserPreference', getUserPreference())
   }
 
   return {
