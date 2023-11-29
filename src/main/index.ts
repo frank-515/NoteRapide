@@ -4,11 +4,12 @@ import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import {dialog} from 'electron'
 import {
+  duplicate,
   FileItem,
   init_storage,
-  loadUserPreference,
+  loadUserPreference, move,
   read,
-  read_dir,
+  read_dir, remove, rename,
   saveUserPreference,
   UserPreference,
   write, write_absolute
@@ -114,7 +115,21 @@ ipcMain.handle('app.list', async (_) : Promise<FileItem[]> => {
   return read_dir()
 })
 
+ipcMain.on('app.move', (_, oldPath: string, newPath: string) => {
+  move(oldPath, newPath)
+})
 
+ipcMain.on('app.rename', (_, oldPath: string, name: string) => {
+  rename(oldPath, name)
+})
+
+ipcMain.on('app.duplicate', (_, p: string, destination: string) => {
+  duplicate(p, destination)
+})
+
+ipcMain.on('app.remove', (_, path: string) => {
+  remove(path)
+} )
 
 ipcMain.on('app.saveTo', (_, content: string) => {
   dialog

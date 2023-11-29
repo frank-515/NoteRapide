@@ -79,7 +79,35 @@ function write_absolute(p: string, data: string) {
     console.error("Unable to write:", error);
   }
 }
+function move(oldPath: string, newPath: string) {
+  oldPath = path.join(storage_path, oldPath);
+  newPath = path.join(storage_path, newPath);
+  try {
+    fs.renameSync(oldPath, newPath);
+  } catch (error) {
+    console.error("Unable to move file:", error);
+  }
+}
 
+function rename(oldPath: string, name: string) {
+  oldPath = path.join(storage_path, oldPath);
+  const newPath = path.join(path.dirname(oldPath), name)
+  try {
+    fs.renameSync(oldPath, newPath)
+  } catch (error) {
+    console.error(`Unable to rename ${oldPath}:`, error)
+  }
+}
+
+function duplicate(p: string, destination: string) {
+  p = path.join(storage_path, p)
+  destination = path.join(storage_path, destination)
+  try {
+    fs.copyFileSync(p, destination)
+  } catch (error) {
+    console.error(`Unable to copy ${p} to ${destination}:`, error)
+  }
+}
 
 function remove(p: string) {
   p = path.join(storage_path, p)
@@ -129,7 +157,8 @@ function read_dir_recursively(p: string) {
 export {
   storage_path, user_preference_path,
   init_storage, loadUserPreference, saveUserPreference,
-  read, write, remove, read_dir, write_absolute
+  read, write, remove, read_dir, write_absolute, rename,
+  move, duplicate
 }
 
 export type {
