@@ -20,8 +20,10 @@ const defaultUserPreference : UserPreference = {
   theme: "light"
 }
 
+const userConfigFileName = 'user_config.json'
+
 const storage_path = path.join(app.getPath("documents"), app.name);
-const user_preference_path = path.join(storage_path, 'user_config.json')
+const user_preference_path = path.join(storage_path, userConfigFileName)
 function init_storage() {
   try {
     fs.mkdirSync(storage_path, {recursive: true})
@@ -129,6 +131,9 @@ function read_dir_recursively(p: string) {
 
   for (let i = 0; i < items.length; i++) {
     const itemName = items[i];
+    if (itemName === userConfigFileName) {
+      continue;
+    }
     const itemPath = path.join(p, itemName)
     const relativePath = path.relative(storage_path, path.join(p, itemName))
     const stats = fs.statSync(itemPath);

@@ -24,9 +24,28 @@ const statusBarActionList = [
   {name: 'Plug-ins', action: () => {}}
 ];
 const fileListActionList = [
-  {name: 'Rename', icon: mdiPencil ,action: (index: number) => {}},
-  {name: 'Delete', icon: mdiDelete ,action: (index: number) => {}},
-  {name: 'Duplicate', icon: mdiContentCopy, action: (index: number) => {}}
+  {name: 'Rename', icon: mdiPencil ,action: (index: number) => {
+    }},
+  {name: 'Delete', icon: mdiDelete ,action: (index: number) => {
+    const filePath = fileList.value[index].relative_path;
+    // Switch opening file before delete, If not, File will be created again
+    if (filePath === toValue(last_edit_path)) {
+      if (fileList.value.length >= 2) {
+        last_edit_path.value = index == 0 ?
+          fileList.value[1].relative_path : fileList.value[0].relative_path
+      } else {
+        // If there is non file in list, use default value
+        last_edit_path.value = '/Untitled'
+      }
+    }
+    api.app_send('remove', filePath);
+    updateSideList()
+    }},
+  {name: 'Duplicate', icon: mdiContentCopy, action: (index: number) => {
+    const filePath = fileList.value[index].relative_path;
+    api.app_send('duplicate', filePath , filePath + '(copy)');
+    updateSideList()
+    }}
 ]
 
 
@@ -113,7 +132,9 @@ const onClickDocument = (index: number) => {
 
 onMounted(() => {
   userStore.loadUserPreference()
-  updateSideList()
+  setInterval(() => {
+    updateSideList()
+  }, 1000)
 })
 </script>
 
@@ -141,8 +162,8 @@ onMounted(() => {
 
     <v-navigation-drawer v-model="drawer">
       <v-list nav>
-        <v-list-item v-for="(item, idx) in drawerItem"
-                     :value="idx" :key="idx" @click="onClickDocument(idx)">
+        <v-list-item v-for="(item, drawerIdx) in drawerItem"
+                     :value="drawerIdx" :key="drawerIdx" @click="onClickDocument(drawerIdx)">
           <template #title>
             {{ item }}
           </template>
@@ -152,7 +173,7 @@ onMounted(() => {
               <v-menu activator="parent">
                 <v-btn-group>
                   <v-btn v-for="(item, idx) in fileListActionList" variant="elevated"
-                         :value="idx" :key="idx" @click="item.action(idx)"
+                         :value="idx" :key="idx" @click="item.action(drawerIdx)"
                   >
                     <v-icon size="large" :icon="item.icon"></v-icon>
                   </v-btn>
