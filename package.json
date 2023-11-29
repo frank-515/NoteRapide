@@ -29,6 +29,8 @@
     "@types/markdown-it-emoji": "^2.0.4",
     "electron-updater": "^6.1.1",
     "highlight.js": "^11.9.0",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^2.5.1",
     "markdown-it": "^13.0.2",
     "markdown-it-container": "^3.0.0",
     "markdown-it-emoji": "^2.0.2",
