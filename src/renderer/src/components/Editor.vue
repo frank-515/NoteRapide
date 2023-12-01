@@ -9,7 +9,7 @@ import {
   mdiFormatQuoteClose,
   mdiLanguageMarkdown,
   mdiTextBox
-} from "@mdi/js";
+} from '@mdi/js'
 
 import markdown_it from 'markdown-it'
 import emoji from 'markdown-it-emoji'
@@ -23,23 +23,114 @@ const userStore = useUserStore()
 const { last_edit_path } = storeToRefs(userStore)
 
 const editButtons = [
-  {name: "Bold", icon: mdiFormatBold, action: () => {}},
-  {name: "Italic", icon: mdiFormatItalic, action: () => {}},
-  {name: "Quote", icon: mdiFormatQuoteClose, action: () => {}},
-  {name: "List", icon: mdiFormatListBulleted, action: () => {}},
-  {name: "Code", icon: mdiCodeBraces, action: () => {}}
+  {
+    name: 'Bold',
+    icon: mdiFormatBold,
+    action: () => {
+      insert('**', '**')
+    }
+  },
+  {
+    name: 'Italic',
+    icon: mdiFormatItalic,
+    action: () => {
+      insert('*', '*')
+    }
+  },
+  {
+    name: 'Quote',
+    icon: mdiFormatQuoteClose,
+    action: () => {
+      insertCharAtLineStart('> ')
+    }
+  },
+  {
+    name: 'List',
+    icon: mdiFormatListBulleted,
+    action: () => {
+      insertCharAtLineStart('- ')
+    }
+  },
+  { name: 'Code', icon: mdiCodeBraces, action: () => {
+      insertLinesAroundSelection('```', '```')
+    } }
 ]
 
 const insert = (b: string, e: string) => {
   const textarea_dom = document.querySelector('textarea')!
   let start = textarea_dom.selectionStart
   let end = textarea_dom.selectionEnd
+  if (start == end && e.length != 0) return
   const changed_input =
-    textarea_dom.value.substring(0, start) + b +
-    textarea_dom.value.substring(start, end) + e +
+    textarea_dom.value.substring(0, start) +
+    b +
+    textarea_dom.value.substring(start, end) +
+    e +
     textarea_dom.value.substring(end)
-  textarea_dom.value = changed_input;
-  textarea_dom.selectionStart = textarea_dom.selectionEnd = start + b.length
+  raw_md_text.value = changed_input
+  setTimeout(() => {
+    textarea_dom.selectionStart = start
+    textarea_dom.selectionStart = start + b.length
+  }, 100)
+}
+
+const insertLinesAroundSelection = (b: string, e: string) => {
+  const textareaDom = document.querySelector('textarea') as HTMLTextAreaElement;
+  if (!textareaDom) return;
+
+  const selectionStartLine = getLineNumber(textareaDom.value.substring(0, textareaDom.selectionStart));
+  const selectionEndLine = getLineNumber(textareaDom.value.substring(0, textareaDom.selectionEnd));
+
+  const textareaValue = textareaDom.value;
+  const lines = textareaValue.split('\n');
+  const changedLines: string[] = [];
+
+  for (let i = 0; i < lines.length; i++) {
+    if (i === selectionStartLine) {
+      changedLines.push(b);
+    }
+
+    changedLines.push(lines[i]);
+
+    if (i === selectionEndLine) {
+      changedLines.push(e);
+    }
+  }
+
+  raw_md_text.value = changedLines.join('\n');
+};
+const insertCharAtLineStart = (char: string) => {
+  const textareaDom = document.querySelector('textarea') as HTMLTextAreaElement
+  if (!textareaDom) return
+
+  const start = getLineNumber(textareaDom.value.substring(0, textareaDom.selectionStart))
+  const end = getLineNumber(textareaDom.value.substring(0, textareaDom.selectionEnd))
+  const textareaValue = textareaDom.value
+  const lines = textareaValue.split('\n')
+  const changedLines: string[] = []
+  let addedCharCount = 0
+
+  for (let i = 0; i < lines.length; i++) {
+    if (i >= start && i <= end) {
+      changedLines.push(char + lines[i])
+      if (i === start || start === end) addedCharCount += char.length
+    } else {
+      changedLines.push(lines[i])
+    }
+  }
+
+  raw_md_text.value = changedLines.join('\n')
+
+  setTimeout(() => {
+    textareaDom.selectionStart = textareaDom.selectionEnd =
+      textareaDom.selectionStart + addedCharCount
+  }, 100)
+}
+
+const getLineNumber = (text: string): number => {
+  const newLineRegex = /\r\n|[\n\v\f\r\x85\u2028\u2029]/g
+  const match = text.match(newLineRegex)
+  return match ? match.length : 0
 }
 
 watch(last_edit_path, (last_edit_path) => {
@@ -88,7 +179,7 @@ onMounted(() => {
     switch (event.key) {
       case 'Tab':
         event.preventDefault()
-        insert('\t')
+        insert('\t', '')
         break
       case '(':
         event.preventDefault()
@@ -112,35 +203,39 @@ onMounted(() => {
 </script>
 
 <template>
-    <div id="wrapper">
-      <v-sheet id="edit">
-        <div>
-          <v-icon :icon="mdiLanguageMarkdown"></v-icon>
-          <v-btn-group variant="plain">
-            <v-btn v-for="(item, idx) in editButtons" density="compact"
-                   :value="idx" :key="idx" @click="item.action()">
-              <v-icon :icon="item.icon"></v-icon>
-              <v-tooltip :text="item.name" activator="parent" location="bottom"></v-tooltip>
-            </v-btn>
-          </v-btn-group>
-        </div>
-        <v-textarea
-          variant="outlined"
-          v-model="raw_md_text"
-          :autofocus="true"
-          :auto-grow="true"
-          :no-resize="true"
-          id="textarea"
-        >
-        </v-textarea>
-      </v-sheet>
+  <div id="wrapper">
+    <v-sheet id="edit">
+      <div>
+        <v-icon :icon="mdiLanguageMarkdown"></v-icon>
+        <v-btn-group variant="plain" density="compact">
+          <v-btn
+            v-for="(item, idx) in editButtons"
+            density="compact"
+            :value="idx"
+            :key="idx"
+            @click="item.action()"
+          >
+            <v-icon :icon="item.icon"></v-icon>
+            <v-tooltip :text="item.name" activator="parent" location="bottom"></v-tooltip>
+          </v-btn>
+        </v-btn-group>
+      </div>
+      <v-textarea
+        variant="outlined"
+        v-model="raw_md_text"
+        :autofocus="true"
+        :auto-grow="true"
+        :no-resize="true"
+        id="textarea"
+      >
+      </v-textarea>
+    </v-sheet>
 
-      <v-sheet id="preview" v-if="mdAndUp">
-        <v-icon :icon="mdiTextBox"></v-icon>
-        <div v-html="rendered_md_text" id="preview-area"></div>
-      </v-sheet>
-    </div>
-
+    <v-sheet id="preview" v-if="mdAndUp">
+      <v-icon :icon="mdiTextBox"></v-icon>
+      <div v-html="rendered_md_text" id="preview-area"></div>
+    </v-sheet>
+  </div>
 </template>
 
 <style lang="stylus">
