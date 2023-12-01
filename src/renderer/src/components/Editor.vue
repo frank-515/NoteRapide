@@ -30,6 +30,18 @@ const editButtons = [
   {name: "Code", icon: mdiCodeBraces, action: () => {}}
 ]
 
+const insert = (b: string, e: string) => {
+  const textarea_dom = document.querySelector('textarea')!
+  let start = textarea_dom.selectionStart
+  let end = textarea_dom.selectionEnd
+  const changed_input =
+    textarea_dom.value.substring(0, start) + b +
+    textarea_dom.value.substring(start, end) + e +
+    textarea_dom.value.substring(end)
+  textarea_dom.value = changed_input;
+  textarea_dom.selectionStart = textarea_dom.selectionEnd = start + b.length
+}
+
 watch(last_edit_path, (last_edit_path) => {
   console.log('[DEBUG]: Reading file:' + toValue(last_edit_path))
   window.api
@@ -71,15 +83,6 @@ onMounted(() => {
     window.api.app_send('write', toValue(last_edit_path), toValue(raw_md_text))
   }, 100)
 
-  const insert = (c: string) => {
-    const textarea_dom = document.querySelector('textarea')!
-    let start = textarea_dom.selectionStart
-    let end = textarea_dom.selectionEnd
-    textarea_dom.value =
-      textarea_dom.value.substring(0, start) + c + textarea_dom.value.substring(end)
-    textarea_dom.selectionStart = textarea_dom.selectionEnd = start + 1
-  }
-
   addEventListener('keydown', (event) => {
     // When input
     switch (event.key) {
@@ -89,19 +92,19 @@ onMounted(() => {
         break
       case '(':
         event.preventDefault()
-        insert('()')
+        insert('(', ')')
         break
       case '[':
         event.preventDefault()
-        insert('[]')
+        insert('[', ']')
         break
       case '{':
         event.preventDefault()
-        insert('{}')
+        insert('{', '}')
         break
       case '"':
         event.preventDefault()
-        insert('""')
+        insert('"', '"')
         break
     }
   })
