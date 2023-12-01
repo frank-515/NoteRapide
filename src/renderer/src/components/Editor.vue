@@ -1,7 +1,15 @@
 <script setup lang="ts">
 import { useDisplay } from 'vuetify'
 import { computed, onMounted, ref, toValue, watch } from 'vue'
-import { mdiLanguageMarkdown, mdiTextBox } from '@mdi/js'
+import {
+  mdiCodeBraces,
+  mdiFormatBold,
+  mdiFormatItalic,
+  mdiFormatListBulleted,
+  mdiFormatQuoteClose,
+  mdiLanguageMarkdown,
+  mdiTextBox
+} from "@mdi/js";
 
 import markdown_it from 'markdown-it'
 import emoji from 'markdown-it-emoji'
@@ -13,6 +21,14 @@ import { storeToRefs } from 'pinia'
 
 const userStore = useUserStore()
 const { last_edit_path } = storeToRefs(userStore)
+
+const editButtons = [
+  {name: "Bold", icon: mdiFormatBold, action: () => {}},
+  {name: "Italic", icon: mdiFormatItalic, action: () => {}},
+  {name: "Quote", icon: mdiFormatQuoteClose, action: () => {}},
+  {name: "List", icon: mdiFormatListBulleted, action: () => {}},
+  {name: "Code", icon: mdiCodeBraces, action: () => {}}
+]
 
 watch(last_edit_path, (last_edit_path) => {
   console.log('[DEBUG]: Reading file:' + toValue(last_edit_path))
@@ -93,25 +109,35 @@ onMounted(() => {
 </script>
 
 <template>
-  <div id="wrapper">
-    <v-sheet id="edit">
-      <v-icon :icon="mdiLanguageMarkdown"></v-icon>
-      <v-textarea
-        variant="outlined"
-        v-model="raw_md_text"
-        :autofocus="true"
-        :auto-grow="true"
-        :no-resize="true"
-        id="textarea"
-      >
-      </v-textarea>
-    </v-sheet>
+    <div id="wrapper">
+      <v-sheet id="edit">
+        <div>
+          <v-icon :icon="mdiLanguageMarkdown"></v-icon>
+          <v-btn-group variant="plain">
+            <v-btn v-for="(item, idx) in editButtons" density="compact"
+                   :value="idx" :key="idx" @click="item.action()">
+              <v-icon :icon="item.icon"></v-icon>
+              <v-tooltip :text="item.name" activator="parent" location="bottom"></v-tooltip>
+            </v-btn>
+          </v-btn-group>
+        </div>
+        <v-textarea
+          variant="outlined"
+          v-model="raw_md_text"
+          :autofocus="true"
+          :auto-grow="true"
+          :no-resize="true"
+          id="textarea"
+        >
+        </v-textarea>
+      </v-sheet>
 
-    <v-sheet id="preview" v-if="mdAndUp">
-      <v-icon :icon="mdiTextBox"></v-icon>
-      <div v-html="rendered_md_text" id="preview-area"></div>
-    </v-sheet>
-  </div>
+      <v-sheet id="preview" v-if="mdAndUp">
+        <v-icon :icon="mdiTextBox"></v-icon>
+        <div v-html="rendered_md_text" id="preview-area"></div>
+      </v-sheet>
+    </div>
+
 </template>
 
 <style lang="stylus">
