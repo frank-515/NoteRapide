@@ -6,8 +6,8 @@ import {
   mdiFormatBold,
   mdiFormatItalic,
   mdiFormatListBulleted,
-  mdiFormatQuoteClose,
-  mdiLanguageMarkdown,
+  mdiFormatQuoteClose, mdiImage,
+  mdiLanguageMarkdown, mdiRename,
   mdiTextBox
 } from "@mdi/js";
 
@@ -27,14 +27,14 @@ const editButtons = [
     name: 'Bold',
     icon: mdiFormatBold,
     action: () => {
-      insert('**', '**')
+      insert(' **', '** ')
     }
   },
   {
     name: 'Italic',
     icon: mdiFormatItalic,
     action: () => {
-      insert('*', '*')
+      insert(' *', '* ')
     }
   },
   {
@@ -58,7 +58,14 @@ const editButtons = [
     name: 'Line', icon: mdiDragHorizontal, action: () => {
     insertCharAtLineStart('\n---\n')
     }
-  }
+  },
+  {name: 'Image', icon: mdiImage, action: () => {
+
+    }},
+  {name: 'Rename', icon: mdiRename, action: () => {
+
+    // window.api.app_send('rename', toValue(last_edit_path), newName)
+    }}
 ]
 
 const insert = (b: string, e: string) => {
@@ -215,8 +222,7 @@ onMounted(() => {
   <div id="wrapper">
     <v-sheet id="edit">
       <div>
-        <v-icon :icon="mdiLanguageMarkdown"></v-icon>
-        <v-btn-group variant="plain" density="compact">
+        <v-btn-group variant="tonal" density="compact" style="margin: 5px">
           <v-btn
             v-for="(item, idx) in editButtons"
             density="compact"

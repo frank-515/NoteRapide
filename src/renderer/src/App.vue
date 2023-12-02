@@ -122,7 +122,7 @@ const snapPDF = () => {
   html2canvas(domElement, {
     allowTaint: true,
     useCORS: true,
-    scale: 2 // 增加截图的清晰度
+    scale: 3 // 增加截图的清晰度
   })
     .then((canvas) => {
       const imgData = canvas.toDataURL('image/jpeg', 1.0);
