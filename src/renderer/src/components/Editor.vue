@@ -2,14 +2,14 @@
 import { useDisplay } from 'vuetify'
 import { computed, onMounted, ref, toValue, watch } from 'vue'
 import {
-  mdiCodeBraces,
+  mdiCodeBraces, mdiDragHorizontal,
   mdiFormatBold,
   mdiFormatItalic,
   mdiFormatListBulleted,
   mdiFormatQuoteClose,
   mdiLanguageMarkdown,
   mdiTextBox
-} from '@mdi/js'
+} from "@mdi/js";
 
 import markdown_it from 'markdown-it'
 import emoji from 'markdown-it-emoji'
@@ -53,7 +53,12 @@ const editButtons = [
   },
   { name: 'Code', icon: mdiCodeBraces, action: () => {
       insertLinesAroundSelection('```', '```')
-    } }
+    } },
+  {
+    name: 'Line', icon: mdiDragHorizontal, action: () => {
+    insertCharAtLineStart('\n---\n')
+    }
+  }
 ]
 
 const insert = (b: string, e: string) => {
@@ -74,7 +79,7 @@ const insert = (b: string, e: string) => {
   setTimeout(() => {
     textarea_dom.selectionStart = start + b.length;
     textarea_dom.selectionEnd = end + b.length;
-  }, 10); // 将延时设置为0，等待下一个事件循环
+  }, 0); // 将延时设置为0，等待下一个事件循环
 };
 
 
@@ -284,7 +289,20 @@ hr
   margin 1ex 0 1ex 0
   background repeating-linear-gradient(to right, #a2a9b6 0px, #a2a9b6 4px, transparent 0px, transparent 10px)
 
-#preview-area > *
-  margin 1ex
+#preview-area
+  max-width 50vw
+  > *
+    overflow-wrap: break-word
+    word-wrap: break-word;
+    margin 1ex
+
+
+
+blockquote
+  padding 0.5ex
+  border-left 1ex gray solid; /* 添加一条灰色的竖线 */
+  color gray; /* 将文本改为灰色 */
+  padding-left 1ex; /* 添加左间距以使文本不与竖线重叠 */
+
 
 </style>
