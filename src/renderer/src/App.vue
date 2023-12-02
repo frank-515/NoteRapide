@@ -112,56 +112,44 @@ const currentDocumentName = computed(() => {
   return lastDotIndex > -1 ? fileName.slice(0, lastDotIndex) : fileName
 })
 
-// From https://www.cnblogs.com/lizhao123/p/15136159.html
 const snapPDF = () => {
-  console.log(document.querySelector('#preview-area'))
-  const domElement = document.getElementById('preview-area')!
+  const domElement = document.getElementById('preview-area');
+  if (!domElement) {
+    console.error('Element not found');
+    return;
+  }
+
   html2canvas(domElement, {
     allowTaint: true,
-    useCORS: true
+    useCORS: true,
+    scale: 2 // 增加截图的清晰度
   })
     .then((canvas) => {
-      const contentWidth = canvas.width
-      const contentHeight = canvas.height
-      //一页pdf显示html页面生成的canvas高度;
-      const pageHeight = (contentWidth / 592.28) * 841.89
-      //未生成pdf的html页面高度
-      let leftHeight = contentHeight
-      //页面偏移
-      let position = 0
-      //a4纸的尺寸[595.28,841.89]，html页面生成的canvas在pdf中图片的宽高
-      const margin = 15
-      const imgWidth = 595.28 - margin
-      const imgHeight = (595.28 / contentWidth) * contentHeight - margin
-      const pageData = canvas.toDataURL('image/jpeg', 1.0)
-      console.log(pageData)
-      const pdf = new JsPDF('p', 'pt', 'a4')
-      //有两个高度需要区分，一个是html页面的实际高度，和生成pdf的页面高度(841.89)
-      //当内容未超过pdf一页显示的范围，无需分页
-      if (leftHeight < pageHeight) {
-        //在pdf.addImage(pageData, 'JPEG', 左，上，宽度，高度)设置在pdf中显示；
-        pdf.addImage(pageData, 'JPEG', margin, margin, imgWidth, imgHeight)
-        // pdf.addImage(pageData, 'JPEG', 20, 40, imgWidth, imgHeight);
-      } else {
-        // 分页
-        while (leftHeight > 0) {
-          pdf.addImage(pageData, 'JPEG', 0, position, imgWidth, imgHeight)
-          leftHeight -= pageHeight
-          position -= 841.89
-          //避免添加空白页
-          if (leftHeight > 0) {
-            pdf.addPage()
-          }
-        }
-      }
-      //可动态生成
-      pdf.save('output.pdf')
+      const imgData = canvas.toDataURL('image/jpeg', 1.0);
+
+      // 页边距（pt）
+      const margin = 30;
+
+      // 计算带边距的画布尺寸
+      const canvasWidthInPt = ((canvas.width / 96) * 72) - (2 * margin);
+      const canvasHeightInPt = ((canvas.height / 96) * 72) - (2 * margin);
+
+      // 创建一个新的 PDF 实例
+      const pdf = new JsPDF({
+        orientation: canvasWidthInPt > canvasHeightInPt ? 'landscape' : 'portrait',
+        unit: 'pt',
+        format: [(canvas.width / 96) * 72, (canvas.height / 96) * 72]
+      });
+
+      // 将图像添加到 PDF，并应用边距
+      pdf.addImage(imgData, 'JPEG', margin, margin, canvasWidthInPt, canvasHeightInPt);
+
+      pdf.save('output.pdf');
     })
     .catch((error) => {
-      console.error('Unable to generate PDF document: ', error)
-    })
+      console.error('Unable to generate PDF document: ', error);
+    });
 }
-
 const updateSideList = () => {
   window.api.app_invoke('list').then((list: FileItem[]) => {
     fileList.value = list.filter((f) => f.type === 'File')
