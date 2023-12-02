@@ -57,22 +57,26 @@ const editButtons = [
 ]
 
 const insert = (b: string, e: string) => {
-  const textarea_dom = document.querySelector('textarea')!
-  let start = textarea_dom.selectionStart
-  let end = textarea_dom.selectionEnd
-  if (start == end && e.length != 0) return
-  const changed_input =
-    textarea_dom.value.substring(0, start) +
-    b +
-    textarea_dom.value.substring(start, end) +
-    e +
-    textarea_dom.value.substring(end)
-  raw_md_text.value = changed_input
+  const textarea_dom = document.querySelector('textarea')!;
+  let start = textarea_dom.selectionStart;
+  let end = textarea_dom.selectionEnd;
+
+  let beforeText = textarea_dom.value.substring(0, start);
+  let selectedText = textarea_dom.value.substring(start, end);
+  let afterText = textarea_dom.value.substring(end);
+
+  let changed_input = beforeText + b + selectedText + e + afterText;
+
+  // 更新Vue变量，而不是直接修改DOM
+  raw_md_text.value = changed_input;
+
+  // 设置一个延时以等待Vue更新DOM
   setTimeout(() => {
-    textarea_dom.selectionStart = start
-    textarea_dom.selectionStart = start + b.length
-  }, 100)
-}
+    textarea_dom.selectionStart = start + b.length;
+    textarea_dom.selectionEnd = end + b.length;
+  }, 10); // 将延时设置为0，等待下一个事件循环
+};
+
 
 const insertLinesAroundSelection = (b: string, e: string) => {
   const textareaDom = document.querySelector('textarea') as HTMLTextAreaElement;
@@ -279,4 +283,8 @@ hr
   padding-top 2px
   margin 1ex 0 1ex 0
   background repeating-linear-gradient(to right, #a2a9b6 0px, #a2a9b6 4px, transparent 0px, transparent 10px)
+
+#preview-area > *
+  margin 1ex
+
 </style>
