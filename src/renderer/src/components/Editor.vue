@@ -7,7 +7,7 @@ import {
   mdiFormatItalic,
   mdiFormatListBulleted,
   mdiFormatQuoteClose, mdiImage,
-  mdiLanguageMarkdown, mdiRename,
+  mdiRename,
   mdiTextBox
 } from "@mdi/js";
 

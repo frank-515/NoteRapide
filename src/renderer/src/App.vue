@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import {
-  mdiCheckBold,
   mdiCog,
   mdiMinus,
   mdiPlus,
@@ -9,8 +8,8 @@ import {
   mdiDelete,
   mdiContentCopy,
   mdiLanguageMarkdown,
-  mdiFilePdfBox
-} from '@mdi/js'
+  mdiFilePdfBox, mdiCheck
+} from "@mdi/js";
 import { computed, onMounted, ref, toValue } from 'vue'
 import Editor from './components/Editor.vue'
 import { useUserStore } from './userStore'
@@ -294,8 +293,8 @@ onMounted(() => {
             </v-text-field>
           </template>
           <template #append>
-            <v-btn @click="onEnter()" variant="plain" density="compact" size="small" id="check-btn">
-              <v-icon :icon="mdiCheckBold"></v-icon>
+            <v-btn @click="onEnter()" icon variant="plain" density="compact" id="check-btn">
+              <v-icon :icon="mdiCheck"></v-icon>
             </v-btn>
           </template>
         </v-list-item>
